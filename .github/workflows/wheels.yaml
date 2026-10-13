@@ -9,11 +9,19 @@ on:
   release:
     types: [published]
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   compiled:
     name: "Compiled Wheels (${{ matrix.os }})"
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os:
           - "ubuntu-latest"
@@ -23,6 +31,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Build and Test Wheels
         uses: pypa/cibuildwheel@v4.3.1
@@ -39,6 +49,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Setup Python
         uses: actions/setup-python@v5

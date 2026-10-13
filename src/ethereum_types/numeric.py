@@ -821,7 +821,8 @@ U64.MAX_VALUE = U64(_max_value(64))
 
 
 # mypyc releases before python/mypy#22100 do not fill the C-level `nb_index`
-# slot from `__index__`, so compiled numbers would fail as slice indices or
-# `range()` bounds. Setting the method again makes CPython fill the slot for
-# `Unsigned` and all of its subclasses.
+# slot from `__index__`, so compiled numbers would fail anywhere an integer
+# index is needed (slices, `range()`, `hex()`, ...). Setting the method again
+# makes CPython fill the slot for `Unsigned` and all of its subclasses. Drop
+# this once the wheels are built with a mypy release that includes the fix.
 Unsigned.__index__ = Unsigned.__index__  # type: ignore[method-assign]
